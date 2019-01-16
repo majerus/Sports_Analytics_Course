@@ -1,0 +1,159 @@
+---
+title: "Assessment I: Sports Analytics Jan Plan"
+name: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+```
+
+## Section 1: Loading Packages and Data
+
+##### 1. Load the tidyverse library
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+##### 2. Load the Olympic medals data into a data frame called olympics
+
+```{r, echo=TRUE, message=FALSE}
+# the data is stored here: https://raw.githubusercontent.com/majerus/Sports_Analytics_Course/master/olympics.csv
+
+olympics <- read_csv("https://raw.githubusercontent.com/majerus/Sports_Analytics_Course/master/olympics.csv")
+
+
+
+```
+
+Here's some info about variables in the data: 
+
+- ID - Unique number for each athlete
+- Name - Athlete's name
+- Sex - M or F
+- Age - Integer
+- Height - In centimeters
+- Weight - In kilograms
+- Team - Team name
+- NOC - National Olympic Committee 3-letter code
+- Games - Year and season
+- Year - Integer
+- Season - Summer or Winter
+- City - Host city
+- Sport - Sport
+- Event - Event
+- Medal - Gold, Silver, Bronze, or NA
+
+## Section 2: Describing the data
+
+##### 3. How many rows are in the data? 
+
+There are `r nrow(olympics)` in the data. 
+
+##### 4. How many columns are in the data?
+
+There are `r ncol(olympics)` in the data. 
+
+## Section 3: Country (NOC) Medal Counts
+
+##### 5. Which country (NOC) has won the most medals?  
+```{r}
+olympics %>% 
+  count(NOC) %>% 
+  arrange(desc(n)) %>% 
+  slice(1)
+```
+
+The USA has won the most medals. 
+
+##### 6. Which country has won the most medals in the winter games? 
+```{r}
+olympics %>% 
+  filter(Season == "Winter") %>% 
+  count(NOC) %>% 
+  arrange(desc(n)) %>% 
+  slice(1)
+```
+
+The USA has won the most medals in the Winter Olympics. 
+
+## Section 4: Sport Medal Counts
+
+##### 7. Which sport has awarded the fewest medals? 
+```{r}
+
+olympics %>% 
+  count(Sport) %>% 
+  arrange(n) %>% 
+  slice(1)
+
+```
+Aeronautics has awarded only a single medal. 
+
+##### 8. In how many Olympic Games were medals awarded in the sport of Tug-Of-War?
+```{r}
+olympics %>% 
+  filter(Sport == "Tug-Of-War") %>% 
+  distinct(Games) %>% 
+  nrow()
+```
+Medals were awarded in Tug-Of-War in 6 Olympics. 
+
+## Section 5: BMI
+
+#####  9. Which gold medal winner has the highest BMI? (BMI = kg/m^2)
+```{r}
+olympics %>% 
+  filter(Medal == "Gold") %>% 
+  mutate(height_meters = Height/100,
+         height_meters_sq = height_meters^2,
+         bmi = Weight/height_meters_sq) %>% 
+  arrange(desc(bmi)) %>% 
+  select(Name, Games, Sport, Weight, Height, bmi) %>%  
+  slice(1) 
+```
+Andrey Ivanovich Chemerkin has the highest bmi of all gold medal winners. He won gold in weightlight during the 1996 summer games. 
+
+## Section 6: Graphing
+
+##### 10. Create a box plot of the age of medal winners by sex
+```{r}
+olympics %>% 
+  ggplot(., aes(x = Sex, y = Age)) +
+  geom_boxplot()
+```
+
+##### 11. Who is that person who won a medal when they were 10? 
+```{r}
+olympics %>% 
+  filter(Age == 10) %>% 
+  select(Name, Age, NOC, Sport, Games, Medal)
+```
+Dimitrios Loudras won a bronze medal in the 1896 Summer Olympics in gymnastics at the age of 10. 
+
+##### 12. Facet the boxplot by Medal
+```{r}
+olympics %>% 
+  ggplot(., aes(x = Sex, y = Age)) +
+  geom_boxplot() + 
+  facet_wrap(~Medal)
+
+```
+
+
+## Section 7: Bonus 
+
+##### Which cities have hosted the games multiple times?
+```{r}
+
+olympics %>% 
+  select(City, Games) %>% 
+  distinct() %>% 
+  count(City) %>% 
+  filter(n > 1)
+
+```
+Eight cities have hosted the Olympics more than once. There are Athina, Innsbruck, Lake Placid, London, Los Angeles, Paris, Sankt Moritz, and Stockholm. 
+
