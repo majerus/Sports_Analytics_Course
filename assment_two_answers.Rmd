@@ -1,0 +1,141 @@
+---
+title: "Assessment II: Sports Analytics Jan Plan"
+name: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+```
+
+##### 1. Load packages and read in the goalie data
+```{r}
+
+# load tidyverse and plotly
+library(tidyverse)
+library(plotly)
+
+# the data is stored here: https://raw.githubusercontent.com/majerus/Sports_Analytics_Course/master/hockey_goalie_data.csv
+
+# read in hockey goalie data
+goalies <- read_csv("https://raw.githubusercontent.com/majerus/Sports_Analytics_Course/master/hockey_goalie_data.csv")
+
+```
+
+Here's some info about variables in the data: 
+
+- playerID: Player ID
+- tmID: Team ID
+- year: Year (2005-06 listed as "2005")
+- stint: Stint (order of appearance in a season)
+- GP: Games played
+- Min: Minutes
+- W: Wins
+- L: Losses
+- T_OL: Ties / overtime losses
+- SHO: Shutouts
+- GA: Goals against
+- SA: Shots against
+- firstName: First name
+- lastName: Last name
+- height: Height in inches
+- weight: Weight in pounds
+- birthCountry: Country of birth
+
+##### 2. Explore the hockey data using the glimpse function
+```{r}
+
+glimpse(goalies)
+
+```
+
+##### 3. Which hockey leagues does the data cover? 
+```{r}
+
+goalies %>% 
+  count(lgID)
+
+```
+
+
+##### 4. Create a new data frame called `nhl` that contains only seasons that were played in the NHL. This data will be used for all of the following questions. 
+```{r}
+
+nhl <- 
+goalies %>% 
+  filter(lgID == "NHL")
+
+```
+
+
+##### 5. Create a new variable in `nhl` called `name` that combines the first name and last name columns into a single column. 
+
+```{r}
+# hint the paste function may be helpful. 
+
+nhl <-
+  nhl %>% 
+  mutate(name = paste(firstName, lastName))
+
+
+```
+
+##### 6. Which goalie has played the most games in the NHL?
+```{r}
+
+nhl %>% 
+  select(playerID, name, GP) %>%
+  group_by(playerID, name) %>% 
+  summarise(GP_Total = sum(GP)) %>% 
+  arrange(desc(GP_Total))
+
+
+```
+
+##### 7. What is the highest save percentage for a goalie playing 20 games or more in a season?
+```{r}
+# Note - save percentage is the number of saves divided by the number of shots on goal. You will need to calculate the number of saves.
+nhl_20g <- 
+nhl %>% 
+  filter(GP >= 20) %>% 
+  mutate(saves = SA - GA,
+         save_percentage = saves/SA) %>% 
+  arrange(desc(save_percentage))
+```
+
+##### 8. Create a scatter plot of save percentage over time for goalies who played more than 20 games in a season. 
+```{r}
+# Note year should be on the x-axis 
+# Note exclude seasons prior to 1980 
+
+plot <- 
+nhl_20g %>% 
+  filter(year >= 1980) %>% 
+ggplot(., aes(as.numeric(year), save_percentage, label = name)) +
+  geom_point()
+
+plot
+
+```
+
+##### 9. Make your scatter plot interactive using plotly.  
+```{r}
+
+ggplotly(plot)
+
+```
+
+##### 10. Who is that goalie with the lowest save percentage in 2006?  
+```{r}
+nhl_20g %>% 
+  filter(year == 2006) %>% 
+  select(name, year, save_percentage) %>% 
+  arrange(save_percentage) %>% 
+  slice(1)
+  
+
+
+```
+
