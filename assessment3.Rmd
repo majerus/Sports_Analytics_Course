@@ -1,0 +1,74 @@
+---
+title: "Assessment III: Sports Analytics Jan Plan"
+name: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+```
+
+##### 1. Load packages and read in the 2018 NCAA football rushing data
+```{r}
+# load the tidyverse 
+
+# the data is stored here: https://raw.githubusercontent.com/majerus/Sports_Analytics_Course/master/college_rushing_data_2018.csv
+
+
+```
+
+##### 2. Explore the rushing data using the glimpse function
+```{r}
+
+```
+
+##### 3. Which conferences are included in the data? 
+```{r}
+
+
+```
+
+
+##### 4. Which conference has the most rushing yards in the data? 
+```{r}
+
+
+```
+
+##### 5. Create a new data frame called `top100` that contains only the top 100 rushers from 2018. 
+```{r}
+
+
+```
+
+##### 6. Create a new variable in `top100` called `ave` that calculates each rushers average yards per carry.  
+```{r}
+
+
+```
+
+##### 7. Which conference has the most rushers in the top 100?
+```{r}
+
+
+```
+
+##### 8. Create a scatter plot of yards vs. touchdowns for the top 100 rushers.  
+```{r}
+
+
+```
+
+##### 9. Use the Top 100 Rushers data to create a bar graph of total yards for each conference.   
+```{r}
+
+
+```
+
+##### 10. Who are the top 100 rushers in the conference with the most total rushing yards?  
+```{r}
+
+
+```
